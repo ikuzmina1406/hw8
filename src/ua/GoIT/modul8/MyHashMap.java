@@ -56,7 +56,7 @@ public class MyHashMap<K extends Comparable<K>, V> {
         return null;
     }
 
-    public V get(Object key) {
+    public V get(K key) {
         int index = indexForValues(hash(key), valuesLength);
         Node<K, V> node = values[index];
         for (Node<K, V> n = node; n != null; n = n.next) {
@@ -67,17 +67,33 @@ public class MyHashMap<K extends Comparable<K>, V> {
         return null;
     }
 
-    public void remove(K key) {
-        for (int i = 0; i < size; i++) {
-            if (values[i] != null) {
-                if (values[i].getKey().equals(key)) {
-                    values[i] = null;
+    public V remove(K key) {
+        int hashCode = hash(key);
+        int index = indexForValues(hashCode, valuesLength);
+        Node<K, V> node = values[index];
+        if (node == null) {
+            values[index] = null;
+            return null;
+        } else {
+            for (Node<K, V> n = node; n != null; n = n.next) {
+                if ((key == null && null == n.getKey()) || (key != null && key.equals(n.getKey()))) {
+                    values[index] = null;
                     size--;
-                    condenseValues(i);
-                    break;
+                    return (V) values;
                 }
             }
+            return null;
         }
+        // for (int i = 0; i < size; i++) {
+        //    if (values[i] != null) {
+        //        if (values[i].getKey().equals(key)) {
+        //            values[i] = null;
+        //           size--;
+        //          condenseValues(i);
+        //         break;
+        //     }
+        // }
+        //  }
     }
 
     public void print() {
@@ -91,12 +107,12 @@ public class MyHashMap<K extends Comparable<K>, V> {
 
     }
 
-    private void condenseValues(int start) {
-        for (int i = start; i < size; i++) {
+    // private void condenseValues(int start) {
+    //  for (int i = start; i < size; i++) {
 
-            values[i] = values[i + 1];
-        }
-    }
+    //     values[i] = values[i + 1];
+    //  }
+    //  }
 
     public void clear() {
         values = new Node[valuesLength];
